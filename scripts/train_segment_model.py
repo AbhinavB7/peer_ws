@@ -81,7 +81,16 @@ train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
 
 # Model
-model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
+# model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
+model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
+# model = smp.Unet(
+#     encoder_name="mobilenet_v2",
+#     encoder_weights="imagenet",
+#     in_channels=3,
+#     classes=1,
+#     activation=None
+# )
+
 model = model.cuda()
 
 # Loss and optimizer
@@ -136,5 +145,5 @@ for epoch in range(20):
     writer.add_scalar("Loss/Val", val_epoch_loss, epoch + 1)
 
 # Save final model
-torch.save(model.state_dict(), "models/segmentation/ground_seg_unet.pth")
+torch.save(model.state_dict(), "../models/segmentation/mobilenet.pth")
 print("Training complete. Model saved.")

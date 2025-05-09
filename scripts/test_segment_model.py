@@ -64,8 +64,10 @@ test_dataset = GroundSegDataset(test_imgs, test_masks, transform=transform)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
 # Load trained model
-model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
-model.load_state_dict(torch.load("../models/segmentation/ground_seg_unet_1.pth"))
+# model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
+model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
+
+model.load_state_dict(torch.load("../models/segmentation/mobilenet.pth"))
 model = model.cuda()
 model.eval()
 
