@@ -128,3 +128,5 @@ Be sure to verify all file paths before running training or inference scripts.
 ```
 trtexec --onnx=mobilenet.onnx --saveEngine=model_fp16_new.trt --fp16
 ```
+
+### Please contact if you run into any issue - abhinav7@terpmail.umd.edu
