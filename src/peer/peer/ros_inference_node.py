@@ -89,7 +89,7 @@ class InferenceNode(Node):
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             # Run YOLOv8 inference
-            detect_result = self.det_model.predict(source=img_rgb, verbose=False, conf=0.05)[0]
+            detect_result = self.det_model.predict(source=img_rgb, verbose=False, conf=0.15)[0]
             img_with_boxes = detect_result.plot()
 
             # Run segmentation
