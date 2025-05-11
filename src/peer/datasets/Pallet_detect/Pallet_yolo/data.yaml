@@ -1,0 +1,13 @@
+train: /home/abhi/peer_ws/src/peer/datasets/Pallet_detect/Pallet_yolo/train/images
+val: /home/abhi/peer_ws/src/peer/datasets/Pallet_detect/Pallet_yolo/valid/images
+test: /home/abhi/peer_ws/src/peer/datasets/Pallet_detect/Pallet_yolo/test/images
+
+nc: 1
+names: ['pallet']
+
+roboflow:
+  workspace: abhinav-cnqq3
+  project: pallet-detection-1kv3d
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/abhinav-cnqq3/pallet-detection-1kv3d/dataset/3

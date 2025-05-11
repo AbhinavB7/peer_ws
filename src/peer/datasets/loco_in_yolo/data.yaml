@@ -1,0 +1,6 @@
+path: /home/abhi/peer_ws/src/peer/datasets/loco_in_yolo
+train: images/train
+val: images/val
+test: images/test
+nc: 1
+names: ['pallet']
