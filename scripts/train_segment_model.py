@@ -83,13 +83,6 @@ val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
 # Model
 # model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
 model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
-# model = smp.Unet(
-#     encoder_name="mobilenet_v2",
-#     encoder_weights="imagenet",
-#     in_channels=3,
-#     classes=1,
-#     activation=None
-# )
 
 model = model.cuda()
 

@@ -13,6 +13,10 @@ setup(
          ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/inference.launch.py']),
+        *[(os.path.join('share', package_name, os.path.dirname(f)), [f])
+          for f in glob('scripts/**/*', recursive=True) if os.path.isfile(f)],
+        *[(os.path.join('share', package_name, os.path.dirname(f)), [f])
+          for f in glob('models/**/*', recursive=True) if os.path.isfile(f)],
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'inference_node = peer.ros_inference_node:main',
+            'trt_node = peer.trt_inference_node:main',
         ],
     },
 )

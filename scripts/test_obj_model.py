@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import os
 
 #ad trained model 
-model = YOLO("/home/abhi/peer/runs/detect/pallet_detector_yolov8n2-n/weights/best.pt")
+model = YOLO("/home/abhi/peer_ws/src/peer/scripts/runs/detect/pallet_with_loco/weights/best.pt")
 
 test_dir = "../datasets/Pallet_detect/Pallet_yolo/test/images"
 
@@ -12,7 +12,7 @@ results = model.predict(
     save=True,               
     save_txt=True,           
     project="runs/detect",   
-    name="pallet_test_eval", 
+    name="pallet_test_eval_with_loco_pth", 
     conf=0.25,               
     iou=0.5,                 
     device=0                 

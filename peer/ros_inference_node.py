@@ -10,6 +10,8 @@ import segmentation_models_pytorch as smp
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 from rclpy.qos import QoSProfile, ReliabilityPolicy
+from ament_index_python.packages import get_package_share_directory
+import os
 
 
 class InferenceNode(Node):
@@ -17,8 +19,18 @@ class InferenceNode(Node):
         super().__init__('inference_node')
         self.bridge = CvBridge()
 
-        self.declare_parameter("model_detect_path", "/home/abhi/peer_ws/src/peer/scripts/runs/detect/pallet_detector_yolov8n2-n/weights/best.pt")
-        self.declare_parameter("model_segment_path", "/home/abhi/peer_ws/src/peer/models/segmentation/mobilenet.pth")
+        model_path = os.path.join(
+            get_package_share_directory('peer'),
+            'scripts/runs/detect/pallet_detector_yolov8n2-n/weights/best.pt'
+        )
+
+        segment_path = os.path.join(
+            get_package_share_directory('peer'),
+            'models/segmentation/ground_seg_unet.pth'
+        )
+
+        self.declare_parameter("model_detect_path", model_path)
+        self.declare_parameter("model_segment_path", segment_path)
 
         # Load YOLOv8 model
         detect_path = self.get_parameter("model_detect_path").get_parameter_value().string_value
@@ -27,8 +39,8 @@ class InferenceNode(Node):
 
         # Load segmentation model
         segment_path = self.get_parameter("model_segment_path").get_parameter_value().string_value
-        # self.seg_model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
-        self.seg_model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
+        self.seg_model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
+        # self.seg_model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
 
         self.seg_model.load_state_dict(torch.load(segment_path, map_location='cuda'))
         self.seg_model.eval().cuda()
@@ -62,7 +74,7 @@ class InferenceNode(Node):
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             # Run YOLOv8 inference
-            detect_result = self.det_model.predict(source=img_rgb, verbose=False, conf=0.25)[0]
+            detect_result = self.det_model.predict(source=img_rgb, verbose=False, conf=0.15)[0]
             img_with_boxes = detect_result.plot()
 
             # Run segmentation
