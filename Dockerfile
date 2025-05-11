@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
     curl \
     wget \
+    nvidia-cuda-toolkit \
+    nvidia-cuda-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
@@ -22,13 +25,18 @@ RUN python3 -m pip install --upgrade pip
 COPY requirements_docker.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --ignore-installed -r /tmp/requirements.txt
 
-
-# Optional: Install PyTorch with GPU (CUDA 11.8)
+# Install PyTorch with GPU
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 RUN pip install ultralytics
 
-# Optional: Install OpenCV with contrib (CPU version)
+# Install OpenCV with contrib
 RUN pip install opencv-python-headless
+
+# Install TensorRT Python bindings
+RUN pip install tensorrt --extra-index-url https://pypi.nvidia.com
+
+# Now install pycuda
+RUN pip install pycuda
 
 WORKDIR /workspace
 

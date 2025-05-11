@@ -18,15 +18,16 @@ class InferenceNode(Node):
     def __init__(self):
         super().__init__('inference_node')
         self.bridge = CvBridge()
+        self.depth_image = None
 
         model_path = os.path.join(
             get_package_share_directory('peer'),
-            'scripts/runs/detect/pallet_detector_yolov8n2-n/weights/best.pt'
+            'models/obj_detection/best.pt'
         )
 
         segment_path = os.path.join(
             get_package_share_directory('peer'),
-            'models/segmentation/ground_seg_unet.pth'
+            'models/segmentation/mobilenet.pth'
         )
 
         self.declare_parameter("model_detect_path", model_path)
@@ -39,8 +40,8 @@ class InferenceNode(Node):
 
         # Load segmentation model
         segment_path = self.get_parameter("model_segment_path").get_parameter_value().string_value
-        self.seg_model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
-        # self.seg_model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
+        # self.seg_model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=1, activation=None)
+        self.seg_model = smp.Unet(encoder_name="mobilenet_v2", in_channels=3, classes=1, activation=None)
 
         self.seg_model.load_state_dict(torch.load(segment_path, map_location='cuda'))
         self.seg_model.eval().cuda()
@@ -62,11 +63,25 @@ class InferenceNode(Node):
             qos_profile
         )
         
+        self.create_subscription(
+            Image,
+            '/robot1/zed2i/left/image_depth',
+            self.depth_callback,
+            qos_profile
+        )
+        
         # Publishers
         self.pub_detect = self.create_publisher(Image, '/pallet_detection', 10)
         self.pub_segment = self.create_publisher(Image, '/ground_segmentation', 10)
 
         self.get_logger().info("Inference node ready!")
+
+    def depth_callback(self, msg):
+        try:
+            self.depth_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+        except Exception as e:
+            self.get_logger().warn(f"Depth callback error: {e}")
+
 
     def image_callback(self, msg):
         try:
@@ -74,7 +89,7 @@ class InferenceNode(Node):
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             # Run YOLOv8 inference
-            detect_result = self.det_model.predict(source=img_rgb, verbose=False, conf=0.15)[0]
+            detect_result = self.det_model.predict(source=img_rgb, verbose=False, conf=0.05)[0]
             img_with_boxes = detect_result.plot()
 
             # Run segmentation

@@ -5,7 +5,7 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='peer',
-            executable='trt_node',
+            executable='inference_node',
             name='inference_node',
             output='screen'
         )
