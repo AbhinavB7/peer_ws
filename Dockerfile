@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3 -m pip install --upgrade pip
 
 # Copy and install Python dependencies
-COPY requirements_docker.txt /tmp/requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --ignore-installed -r /tmp/requirements.txt
 
 # Install PyTorch with GPU
